@@ -59,11 +59,18 @@ def solver(_sudoku):
 
     print("Row: {}\nCol: {}\nBox: {}".format(complete_row, complete_col, complete_box))
 
-    # for entry in range(1,10):
-    #     if
-    #
-    #
-    # solver(_sudoku)
+    for entry in range(1,10):
+        if (entry in complete_row) or (entry in complete_col)  or (entry in complete_box):
+            continue
+
+        _sudoku[row][col] = entry
+
+        if solver(_sudoku):
+            return True
+        else:
+            _sudoku[row][col] = 0
+
+    return False
 
 
 def main():
