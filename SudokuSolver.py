@@ -28,30 +28,31 @@ def get_sudoku(filename):
     return int(size), _sudoku
 
 
-def print_sudoku(_sudoku):
-    print()
-    for row in range(9):
+def print_sudoku(_sudoku, size):
+    sqsize = size*size
+    for row in range(sqsize):
         print()
-        if row % 3 == 0:
+        if (not row == 0) and (row % size == 0):
             print()
-        for col in range(9):
-            if col % 3 == 0:
+        for col in range(sqsize):
+            if col % size == 0:
                 print("   ", end="")
             print(_sudoku[row][col], end=" ")
     print("\n")
 
 
-def empty_cell(_sudoku):
-    for row in range(9):
-        for col in range(9):
+def empty_cell(_sudoku, size):
+    sqsize = size*size
+    for row in range(sqsize):
+        for col in range(sqsize):
             if (_sudoku[row][col] == 0):
                 loc = [row, col]
                 return loc
     return []
 
 
-def solver(_sudoku):
-    cell = empty_cell(_sudoku)
+def solver(_sudoku, size):
+    cell = empty_cell(_sudoku, size)
     if len(cell) == 0:
         return True
 
@@ -64,19 +65,20 @@ def solver(_sudoku):
     complete_col = temp.flatten().tolist()
     del temp
 
-    s_row = row - (row % 3)
-    s_col = col - (col % 3)
-    temp = np.array([_sudoku[i][s_col:s_col + 3] for i in range(s_row, s_row + 3)])
+    s_row = row - (row % size)
+    s_col = col - (col % size)
+    temp = np.array([_sudoku[i][s_col:s_col + size] for i in range(s_row, s_row + size)])
     complete_box = temp.flatten().tolist()
     del temp, s_col, s_row
 
-    for entry in range(1, 10):
+    limit = (size*size)+1
+    for entry in range(1, limit):
         if (entry in complete_row) or (entry in complete_col) or (entry in complete_box):
             continue
 
         _sudoku[row][col] = entry
 
-        if solver(_sudoku):
+        if solver(_sudoku, size):
             return True
         else:
             _sudoku[row][col] = 0
@@ -87,16 +89,18 @@ def solver(_sudoku):
 def main():
     problem_files = []
     if len(argv) < 2:
-        problem_files.append("problem_wrong.txt")
+        problem_files.append("problem_16x16.txt")
     else:
         problem_files.append(argv[1])
 
     (size, sudoku) = get_sudoku(problem_files[0])
     if len(sudoku) == 0:
         return
-    print_sudoku(sudoku)
-    solver(sudoku)
-    print_sudoku(sudoku)
+    print("Problem\n\n")
+    print_sudoku(sudoku, size)
+    solver(sudoku, size)
+    print("\n\n\nSolution\n\n")
+    print_sudoku(sudoku, size)
 
 
 if __name__ == "__main__":
