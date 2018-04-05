@@ -1,3 +1,4 @@
+import math
 from sys import argv
 
 import numpy as np
@@ -8,11 +9,23 @@ def get_sudoku(filename):
     with open(filename, "r") as file:
         data = file.readlines()
 
+    lineno = 0
+    length = len(data)
+    size = math.sqrt(length)
+    if not size == (int(size) / 1.0):
+        print("File {0} is not correct. Should be of square length."
+              "\nColumn count {1} is not a square number".format(filename, length))
+        return []
     for line in data:
+        lineno += 1
         values = line.rstrip().split(",")
+        if not len(values) == length:
+            print("File {0} is not correct. Should be of square length. "
+                  "\nCheck line {1}: Column count not matching with Row count".format(filename, lineno))
+            return []
         _sudoku.append([int(val) for val in values])
 
-    return _sudoku
+    return int(size), _sudoku
 
 
 def print_sudoku(_sudoku):
@@ -53,14 +66,12 @@ def solver(_sudoku):
 
     s_row = row - (row % 3)
     s_col = col - (col % 3)
-    temp = np.array([_sudoku[i][s_col:s_col+3] for i in range(s_row, s_row+3)])
+    temp = np.array([_sudoku[i][s_col:s_col + 3] for i in range(s_row, s_row + 3)])
     complete_box = temp.flatten().tolist()
     del temp, s_col, s_row
 
-    print("Row: {}\nCol: {}\nBox: {}".format(complete_row, complete_col, complete_box))
-
-    for entry in range(1,10):
-        if (entry in complete_row) or (entry in complete_col)  or (entry in complete_box):
+    for entry in range(1, 10):
+        if (entry in complete_row) or (entry in complete_col) or (entry in complete_box):
             continue
 
         _sudoku[row][col] = entry
@@ -76,11 +87,13 @@ def solver(_sudoku):
 def main():
     problem_files = []
     if len(argv) < 2:
-        problem_files.append("problem.txt")
+        problem_files.append("problem_wrong.txt")
     else:
         problem_files.append(argv[1])
 
-    sudoku = get_sudoku(problem_files[0])
+    (size, sudoku) = get_sudoku(problem_files[0])
+    if len(sudoku) == 0:
+        return
     print_sudoku(sudoku)
     solver(sudoku)
     print_sudoku(sudoku)
