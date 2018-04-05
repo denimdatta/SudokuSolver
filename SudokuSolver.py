@@ -1,4 +1,5 @@
 import math
+from builtins import print
 from sys import argv
 
 import numpy as np
@@ -46,6 +47,25 @@ def print_sudoku(_sudoku, size):
             if col % size == 0:
                 print("   ", end="")
             print(_sudoku[row][col], end=" ")
+
+
+def put_solution(_sudoku, filename):
+    length = len(_sudoku)
+    sol = ""
+    i = 0
+    for line in _sudoku:
+        i += 1
+        j = 0
+        for element in line:
+            j += 1
+            sol += str(element)
+            if not j == length:
+                sol += ", "
+        if not i == length:
+            sol += "\n"
+    fl = open(filename, "w")
+    fl.write(sol)
+    fl.close()
 
 
 def empty_cell(_sudoku, size):
@@ -115,6 +135,14 @@ def main():
         if solver(sudoku, size):
             print("\n\n\nSolution\n\n")
             print_sudoku(sudoku, size)
+            solutionfile = problem.split("\\")[-1]
+            if solutionfile.find(".") == -1:
+                solutionfile += "_solution"
+            else:
+                x = solutionfile.split(".")
+                solutionfile = ".".join(list(x[:-1]))
+                solutionfile += "_solution." + x[-1]
+            put_solution(sudoku, "solutions\\" + solutionfile)
         else:
             print("\n\n\n\nSolution is NOT possible.\n\n")
         del sudoku
