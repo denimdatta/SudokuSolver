@@ -1,3 +1,5 @@
+# Denim Datta
+
 import math
 from builtins import print
 from sys import argv
@@ -72,7 +74,7 @@ def empty_cell(_sudoku, size):
     sqsize = size * size
     for row in range(sqsize):
         for col in range(sqsize):
-            if (_sudoku[row][col] == 0):
+            if _sudoku[row][col] == 0:
                 loc = [row, col]
                 return loc
     return []
@@ -117,11 +119,8 @@ def main():
     problem_files = []
     if len(argv) < 2:
         problem_files.append("problems\problem.txt")
-        problem_files.append("problems\problem_16x16.txt")
-        problem_files.append("problems\problem_wrong.txt")
-        problem_files.append("problems\wrong_filename")
     else:
-        problem_files.append(argv[1:])
+        [problem_files.append(fl) for fl in argv[1:]]
 
     for problem in problem_files:
         # print("---")
