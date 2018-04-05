@@ -60,6 +60,7 @@ def solver(_sudoku):
     print("Row: {}\nCol: {}\nBox: {}".format(complete_row, complete_col, complete_box))
 
     # for entry in range(1,10):
+    #     if
     #
     #
     # solver(_sudoku)
