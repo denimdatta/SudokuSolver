@@ -6,8 +6,12 @@ import numpy as np
 
 def get_sudoku(filename):
     _sudoku = []
-    with open(filename, "r") as file:
-        data = file.readlines()
+    try:
+        with open(filename, "r") as file:
+            data = file.readlines()
+    except FileNotFoundError:
+        print("File {0} not found. Please re-check".format(filename))
+        return []
 
     lineno = 0
     length = len(data)
@@ -23,13 +27,17 @@ def get_sudoku(filename):
             print("File {0} is not correct. Should be of square length. "
                   "\nCheck line {1}: Column count not matching with Row count".format(filename, lineno))
             return []
-        _sudoku.append([int(val) for val in values])
+        try:
+            _sudoku.append([int(val) for val in values])
+        except ValueError:
+            print("File {0} is not correct. Contains non-integer at Line : {1}".format(filename, lineno))
+            return []
 
-    return int(size), _sudoku
+    return _sudoku
 
 
 def print_sudoku(_sudoku, size):
-    sqsize = size*size
+    sqsize = size * size
     for row in range(sqsize):
         print()
         if (not row == 0) and (row % size == 0):
@@ -38,11 +46,10 @@ def print_sudoku(_sudoku, size):
             if col % size == 0:
                 print("   ", end="")
             print(_sudoku[row][col], end=" ")
-    print("\n")
 
 
 def empty_cell(_sudoku, size):
-    sqsize = size*size
+    sqsize = size * size
     for row in range(sqsize):
         for col in range(sqsize):
             if (_sudoku[row][col] == 0):
@@ -71,7 +78,7 @@ def solver(_sudoku, size):
     complete_box = temp.flatten().tolist()
     del temp, s_col, s_row
 
-    limit = (size*size)+1
+    limit = (size * size) + 1
     for entry in range(1, limit):
         if (entry in complete_row) or (entry in complete_col) or (entry in complete_box):
             continue
@@ -89,18 +96,30 @@ def solver(_sudoku, size):
 def main():
     problem_files = []
     if len(argv) < 2:
-        problem_files.append("problem_16x16.txt")
+        problem_files.append("problems\problem.txt")
+        problem_files.append("problems\problem_16x16.txt")
+        problem_files.append("problems\problem_wrong.txt")
+        problem_files.append("problems\wrong_filename")
     else:
-        problem_files.append(argv[1])
+        problem_files.append(argv[1:])
 
-    (size, sudoku) = get_sudoku(problem_files[0])
-    if len(sudoku) == 0:
-        return
-    print("Problem\n\n")
-    print_sudoku(sudoku, size)
-    solver(sudoku, size)
-    print("\n\n\nSolution\n\n")
-    print_sudoku(sudoku, size)
+    for problem in problem_files:
+        # print("---")
+        sudoku = get_sudoku(problem)
+        size = int(math.sqrt(len(sudoku)))
+        if len(sudoku) == 0:
+            print("\n", "#" * 150, "\n", sep="")
+            continue
+        print("Problem\n\n")
+        print_sudoku(sudoku, size)
+        if solver(sudoku, size):
+            print("\n\n\nSolution\n\n")
+            print_sudoku(sudoku, size)
+        else:
+            print("\n\n\n\nSolution is NOT possible.\n\n")
+        del sudoku
+        print("\n\n")
+        print("\n", "#" * 150, "\n", sep="")
 
 
 if __name__ == "__main__":
