@@ -48,7 +48,10 @@ def print_sudoku(_sudoku, size):
         for col in range(sqsize):
             if col % size == 0:
                 print("   ", end="")
-            print(_sudoku[row][col], end=" ")
+            if _sudoku[row][col] == 0:
+                print("_", end=" ")
+            else:
+                print(_sudoku[row][col], end=" ")
 
 
 def put_solution(_sudoku, filename):
